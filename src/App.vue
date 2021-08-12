@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="nav">
+      <div v-if="!activeUser">
+        <router-link to="/">Home</router-link> |
+        <router-link to="/login">Login</router-link> |
+        <router-link to="/signup">Signup</router-link>
+      </div>
+      <div v-else>
+        <router-link to="/record">Record</router-link> |
+        <router-link to="/files">Files</router-link> |
+        <a href="#" @click.prevent="logout" >Logout</a>
+      </div>
+    </div>
+    <router-view @logged-in="login" v-bind:user="activeUser" />
   </div>
 </template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
 
 <style>
 #app {
@@ -23,6 +23,66 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
+
+<script>
+import axios from 'axios'
+export default {
+  name: 'app',
+  data () {
+    return {
+      activeUser: null,
+      activeToken: null
+    }
+  },
+  async created () {
+    await this.refreshActiveUser()
+  },
+  watch: {
+    // everytime a route is changed refresh the activeUser
+    '$route': 'refreshActiveUser'
+  },
+  methods: {
+    login (payload) {
+      axios
+        .get(`http://localhost:8081/api/users/${payload.handle}`, { headers: { Authorization: payload.header } })
+        .then((response) => {
+          this.activeUser = response.data
+          this.activeToken = payload.header
+          this.$router.replace({ name: 'Files' })
+        }, (error) => {
+          console.log(error)
+        })
+    },
+    async refreshActiveUser () {
+      if (this.activeUser) {
+        axios
+          .get(`http://localhost:8081/api/users/${this.activeUser.handle}`, { headers: { Authorization: this.activeToken } })
+          .then((response) => {
+            this.activeUser = response.data
+          }, (error) => {
+            console.log(error)
+          })
+      }
+    },
+    async logout () {
+      this.activeUser = null
+      this.$router.replace({ name: 'Login' })
+    }
+  }
+}
+</script>
