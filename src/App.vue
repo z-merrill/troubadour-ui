@@ -7,6 +7,7 @@
         <router-link to="/signup">Signup</router-link>
       </div>
       <div v-else>
+        <a href="#" @click.prevent="" >@{{ activeUser.handle }}</a> |
         <router-link to="/record">Record</router-link> |
         <router-link to="/files">Files</router-link> |
         <a href="#" @click.prevent="logout" >Logout</a>
