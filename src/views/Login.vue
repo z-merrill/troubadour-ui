@@ -1,6 +1,5 @@
 <template>
   <div class="container-fluid" id="login">
-    <Hello msg="Welcome to Your Vue.js App"/>
     <div class="row justify-content-center">
       <form>
         <div class="form-group">
@@ -21,7 +20,6 @@
 
 <script>
   import axios from 'axios'
-  import Hello from '@/components/Hello.vue'
 
   export default {
     name: 'Login',
@@ -32,9 +30,6 @@
           password: ''
         }
       }
-    },
-    components: {
-      Hello
     },
     methods: {
       login () {

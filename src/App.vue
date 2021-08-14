@@ -13,6 +13,7 @@
         <a href="#" @click.prevent="logout" >Logout</a>
       </div>
     </div>
+    <Hello msg="Welcome to Your Vue.js App" v-if="!activeUser"/>
     <transition name="fade">
       <router-view @logged-in="login" v-bind:user="activeUser" v-bind:token="activeToken" />
     </transition>
@@ -49,7 +50,12 @@ img {
 }
 
 .fade-enter-active {
-  transition: opacity .5s;
+  transition: opacity .1s;
+  transition-delay: .11s;
+}
+
+.fade-leave-active {
+  transition: opacity .1s;
 }
 
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
@@ -58,6 +64,7 @@ img {
 </style>
 
 <script>
+import Hello from '@/components/Hello.vue'
 import axios from 'axios'
 export default {
   name: 'app',
@@ -66,6 +73,9 @@ export default {
       activeUser: null,
       activeToken: null
     }
+  },
+  components: {
+    Hello
   },
   async created () {
     await this.refreshActiveUser()
