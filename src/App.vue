@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <div id="nav" class="centered">
       <div v-if="!activeUser">
         <router-link to="/">Home</router-link> |
         <router-link to="/login">Login</router-link> |
@@ -13,7 +13,9 @@
         <a href="#" @click.prevent="logout" >Logout</a>
       </div>
     </div>
-    <router-view @logged-in="login" v-bind:user="activeUser" />
+    <transition name="fade">
+      <router-view @logged-in="login" v-bind:user="activeUser" v-bind:token="activeToken" />
+    </transition>
   </div>
 </template>
 
@@ -22,12 +24,15 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 
+.centered {
+  text-align: center;
+}
+
 #nav {
-  padding: 30px;
+  padding-top: 30px;
 }
 
 #nav a {
@@ -37,6 +42,18 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+img {
+  padding-top: 30px;
+}
+
+.fade-enter-active {
+  transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
 

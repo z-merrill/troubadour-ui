@@ -9,7 +9,7 @@
       <button ref="recordButton">{{ recordButtonText }}</button>
     </div>
     <div class="form-group">
-      <label for="upload">or upload a file instead</label>
+      <label for="upload">or upload a file instead </label>
       <input id="upload" type="file" accept="audio/*" capture ref="recorder">
     </div>
   </div>
@@ -50,7 +50,7 @@
       },
       handleMicrophoneStream (stream) {
         const self = this
-        const options = {mimeType: 'audio/webm'}
+        const options = {mimeType: 'audio/ogg'}
         const mediaRecorder = new MediaRecorder(stream, options)
 
         mediaRecorder.addEventListener('dataavailable', this.dataAvailable)

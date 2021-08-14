@@ -2,44 +2,38 @@
   <div v-cloak>
     <label>{{ recording.filename }}</label>
     <p><audio :src="recording.url" controls></audio></p>
+    <a href="#" @click.prevent="upload" >upload file</a>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'Playback',
-    props: ['recording'],
+    props: ['recording', 'token'],
     data: function () {
       return {
-        azureAccountName: 'troubadour',
-        sasString: 'se=2021-08-11&sp=rwdlac&sv=2018-03-28&ss=b&srt=sco&sig=uNR6ARsSupLnRXp66tc5WI73k8nml9L/tL0pZRlXAas%3D',
-        containerName: '',
-        containerUrl: ''
+        file: ''
       }
     },
-    mounted () {
-
+    async mounted () {
+      this.file = await fetch(this.recording.url)
+        .then(r => r.blob())
+        .then(blobFile => new File([blobFile], this.recording.filename, { type: "audio/ogg" }))
     },
     methods: {
-      buildAzureConfig (file, filename) {
-        return {
-          // baseUrl for blob file uri (i.e. http://<accountName>.blob.core.windows.net/<container>/<blobname>)
-          baseUrl: `https://${this.accountName}.blob.core.windows.net/${this.containerName}/${filename}`,
-          sasToken: this.sasString, // Shared access signature querystring key/value prefixed with ?,
-          file: file, // File object using the HTML5 File API,
-          progress: this.handleFileProgress(), // progress callback function,
-          complete: this.handleFileComplete(), // complete callback function,
-          error: this.handleFileError() // error callback function,
-        }
-      },
-      handleFileProgress () {
-
-      },
-      handleFileComplete () {
-
-      },
-      handleFileError () {
-
+      upload () {
+        let formData = new FormData()
+        formData.append('file', this.file)
+        axios
+          .post('http://localhost:8081/api/files/upload', formData, { headers: { Authorization: this.token } })
+          .then((response) => {
+            console.log('SUCCESS!!')
+            console.log(response)
+          }, (error) => {
+            console.log('FAILURE!!')
+            console.log(error)
+          })
       }
     }
   }

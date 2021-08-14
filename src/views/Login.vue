@@ -1,7 +1,6 @@
 <template>
-  <div class="container-fluid mt-4" id="login"> 
-    <div class="row justify-content-center"><h1 class="display-4">login</h1></div>
-    <br/>
+  <div class="container-fluid" id="login">
+    <Hello msg="Welcome to Your Vue.js App"/>
     <div class="row justify-content-center">
       <form>
         <div class="form-group">
@@ -13,7 +12,8 @@
           <small class="form-text text-muted">your password</small>
         </div>
 
-        <button type="button" v-on:click="login()">Login</button>
+        <button type="button" v-on:click="login()">login</button> or
+        <router-link to="/signup">signup</router-link>
       </form>
     </div>
   </div>
@@ -21,6 +21,7 @@
 
 <script>
   import axios from 'axios'
+  import Hello from '@/components/Hello.vue'
 
   export default {
     name: 'Login',
@@ -31,6 +32,9 @@
           password: ''
         }
       }
+    },
+    components: {
+      Hello
     },
     methods: {
       login () {
