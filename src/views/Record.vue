@@ -6,8 +6,8 @@
     <div class="row justify-content-center">
       <form>
         <Recorder @recording-finished="recordingFinished" />
-        <div class="form-group" v-for="recording in recordings" :key="recording.filename">
-          <Playback :recording="recording" :token="token" />
+        <div class="form-group" v-for="(recording, index) in recordings" :key="recording.filename">
+          <Playback :recording="recording" :token="token" :index="index" :uploaded=false @deleted="removeFile"/>
         </div>
 
         <router-link to="/files" custom v-slot="{ navigate }">
@@ -42,7 +42,13 @@
     },
     methods: {
       recordingFinished (payload) {
-        this.recordings.push({url: payload.url, filename: `${payload.title}-Take ${this.recordings.length + 1}.ogg`})
+        const name = payload.needsExtension ? `${payload.title}-Take ${this.recordings.length + 1}.ogg` : payload.title
+        this.recordings.push({url: payload.url, name: name, id: null })
+      },
+      removeFile (payload) {
+        console.log(payload.index)
+
+        this.recordings.splice(payload.index, 1)
       }
     }
   }

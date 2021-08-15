@@ -10,7 +10,7 @@
     </div>
     <div class="form-group">
       <label for="upload">or upload a file instead </label>
-      <input id="upload" type="file" accept="audio/*" capture ref="recorder">
+      <input id="upload" type="file" @change="createAudioFile" accept="audio/*" capture ref="recorder">
     </div>
   </div>
 </template>
@@ -26,8 +26,6 @@
       }
     },
     mounted () {
-      const recorder = this.$refs.recorder
-      recorder.addEventListener('change', this.createAudioFile, false)
       navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(this.handleMicrophoneStream)
     },
@@ -35,12 +33,11 @@
       createAudioFile (event) {
         const file = event.target.files[0]
         const url = URL.createObjectURL(file)
-        // Do something with the audio file.
-        this.$refs.player.src = url
+        this.$emit('recording-finished', { 'url': url, 'title': file.name, 'needsExtension': false })
       },
       recordingFinished () {
         const url = URL.createObjectURL(new Blob(this.recordedChunks))
-        this.$emit('recording-finished', { 'url': url, 'title': this.title })
+        this.$emit('recording-finished', { 'url': url, 'title': this.title, 'needsExtension': true })
       },
       dataAvailable (event) {
         if (event.data.size > 0) {

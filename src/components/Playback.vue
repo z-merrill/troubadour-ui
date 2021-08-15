@@ -1,8 +1,11 @@
 <template>
   <div v-cloak>
-    <label>{{ recording.filename }}</label>
+    <hr/>
+    <label>{{ recording.name }}</label>
     <p><audio :src="recording.url" controls></audio></p>
-    <a href="#" @click.prevent="upload" >upload file</a>
+    <font-awesome-icon v-if="isUploaded" icon="cloud" />
+    <a href="#" @click.prevent="upload" v-else>upload file</a> | 
+    <a href="#" @click.prevent="deleteFile"><font-awesome-icon icon="trash" /></a>
   </div>
 </template>
 
@@ -10,16 +13,20 @@
   import axios from 'axios'
   export default {
     name: 'Playback',
-    props: ['recording', 'token'],
+    props: ['recording', 'token', 'index', 'uploaded'],
     data: function () {
       return {
-        file: ''
+        file: '',
+        isUploaded: null,
+        url: ''
       }
     },
     async mounted () {
       this.file = await fetch(this.recording.url)
         .then(r => r.blob())
-        .then(blobFile => new File([blobFile], this.recording.filename, { type: "audio/ogg" }))
+        .then(blobFile => new File([blobFile], this.recording.name, { type: "audio/ogg" }))
+      this.isUploaded = this.uploaded
+      this.url = this.recording.url
     },
     methods: {
       upload () {
@@ -28,12 +35,27 @@
         axios
           .post('http://localhost:8081/api/files/upload', formData, { headers: { Authorization: this.token } })
           .then((response) => {
-            console.log('SUCCESS!!')
-            console.log(response)
+            this.recording.id = response.data.id
+            this.isUploaded = true
+            this.url = response.data.url
           }, (error) => {
             console.log('FAILURE!!')
             console.log(error)
           })
+      },
+      deleteFile () {
+        if (this.isUploaded) {
+          axios
+            .delete(`http://localhost:8081/api/files/${this.recording.id}`, { headers: { Authorization: this.token } })
+            .then((response) => {
+            console.log(response)
+          },
+          (error) => {
+              console.log('FAILURE!!')
+              console.log(error)
+          })
+        }
+        this.$emit('deleted', { 'index': this.index })
       }
     }
   }

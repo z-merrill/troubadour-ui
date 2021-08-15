@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="nav" class="centered">
+      <p href="#" @click.prevent="" >TROUBADOUR</p>
       <div v-if="!activeUser">
-        <router-link to="/">Home</router-link> |
+        <router-link to="/">About</router-link> |
         <router-link to="/login">Login</router-link> |
         <router-link to="/signup">Signup</router-link>
       </div>
@@ -13,7 +14,6 @@
         <a href="#" @click.prevent="logout" >Logout</a>
       </div>
     </div>
-    <Hello msg="Welcome to Your Vue.js App" v-if="!activeUser"/>
     <transition name="fade">
       <router-view @logged-in="login" v-bind:user="activeUser" v-bind:token="activeToken" />
     </transition>
@@ -50,12 +50,12 @@ img {
 }
 
 .fade-enter-active {
-  transition: opacity .1s;
-  transition-delay: .11s;
+  transition: opacity .2s;
+  transition-delay: .21s;
 }
 
 .fade-leave-active {
-  transition: opacity .1s;
+  transition: opacity .2s;
 }
 
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
@@ -64,7 +64,6 @@ img {
 </style>
 
 <script>
-import Hello from '@/components/Hello.vue'
 import axios from 'axios'
 export default {
   name: 'app',
@@ -73,9 +72,6 @@ export default {
       activeUser: null,
       activeToken: null
     }
-  },
-  components: {
-    Hello
   },
   async created () {
     await this.refreshActiveUser()
@@ -91,7 +87,6 @@ export default {
         .then((response) => {
           this.activeUser = response.data
           this.activeToken = payload.header
-          this.$router.replace({ name: 'Files' })
         }, (error) => {
           console.log(error)
         })
