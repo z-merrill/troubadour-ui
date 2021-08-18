@@ -8,7 +8,8 @@
           <small class="form-text text-muted">your desired handle</small>
         </div>
         <div class="form-group">
-          <input type="email" name="email" v-model="input.email" placeholder="ass@butt.com" />
+          <p><span class="floating-placeholder" v-if="badEmail">please enter a valid email address</span></p>
+          <input type="email" name="email" v-model="input.email" required placeholder="ass@butt.com" @change="validateEmail" />
           <small class="form-text text-muted">an email you own</small>
         </div>
         <div class="form-group">
@@ -16,7 +17,7 @@
           <small class="form-text text-muted">a very strong password</small>
         </div>
 
-        <button type="button" v-on:click="signup()">signup</button> or 
+        <button type="button" v-on:click="signup()" :disabled='badEmail'>signup</button> or 
         <router-link to="/login">login</router-link>
       </form>
     </div>
@@ -32,8 +33,10 @@
       return {
         input: {
           handle: '',
-          password: ''
-        }
+          password: '',
+          email: ''
+        },
+        badEmail: false
       }
     },
     methods: {
@@ -49,6 +52,13 @@
             })
         } else {
           console.log('A username, email, and password must be present')
+        }
+      },
+      validateEmail () {
+        if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(this.input.email)) {
+          this.badEmail = false
+        } else {
+          this.badEmail = true
         }
       }
     }
